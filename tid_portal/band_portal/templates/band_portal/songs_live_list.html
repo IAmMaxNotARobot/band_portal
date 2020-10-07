@@ -1,0 +1,92 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'Manage Live List' %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'Manage Live List' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+<h4>Live list</h4>
+<div id="sortable01" class="list-group col">
+    {% for song in live_songs %}
+    <div class="list-group-item" id="{{song.id}}">
+        <!--<i class="handle"></i>-->
+        {{ song.artist }} - {{ song.name }}
+    </div>
+    {% endfor %}
+</div>
+<br />
+<h4>Other songs</h4>
+<div id="sortable02" class="list-group col">
+    {% for song in all_songs %}
+    <div class="list-group-item" id="{{song.id}}">
+        <!--<i class="handle"></i>-->
+        {{ song.artist }} - {{ song.name }}
+    </div>
+    {% endfor %}
+</div>
+
+<form id="orderingForm" method="post" action="{% url 'band_portal:songs_live_list_update' %}">
+{% csrf_token %}
+<input type="hidden" id="orderingInput" name="ordering">
+</form>
+
+<button id="saveOrdering" class="btn btn-outline-primary btn-lg float-right mr-2" onclick="saveOrdering()">Save ordering</button>
+
+<p id="demo"></p>
+{% endblock %}
+
+{% block AdditionalScripts %}
+<script>
+var sortable01 = document.getElementById('sortable01');
+var example1 = document.getElementById('example1');
+
+$('#sortable01').sortable({
+	// SortableJS options go here
+	// See: (https://github.com/SortableJS/Sortable#options)
+	group: 'sortable',
+	//invertSwap: true,
+	ghostClass: 'blue-background-class',
+	// handle: '.handle',
+	animation: 150,
+})
+
+$('#sortable02').sortable({
+	group: 'sortable',
+	//invertSwap: true,
+	ghostClass: 'blue-background-class',
+	// handle: '.handle',
+	animation: 150,
+})
+
+// ----
+const saveOrderingButton = document.getElementById('saveOrdering');
+const orderingForm = document.getElementById('orderingForm');
+const formInput = orderingForm.querySelector('#orderingInput');
+
+function saveOrdering() {
+    const rows = document.getElementById("sortable01").querySelectorAll('div');
+    let ids = [];
+    let test = "";
+    for (let row of rows) {
+        ids.push(row.id);
+    }
+    formInput.value = ids.join(',');
+    for(let row of rows){
+        test += row.innerHTML;
+        test += row.id;
+    }
+    //document.getElementById("demo").innerHTML =  ids;
+    //document.getElementById("demo").innerHTML =  formInput.value;
+
+    orderingForm.submit();
+}
+</script>
+{% endblock %}

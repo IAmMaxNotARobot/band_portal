@@ -1,0 +1,60 @@
+{% extends 'registration/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'Login' %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'Login' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+{% if next %}
+{% if user.is_authenticated %}
+<p>Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.</p>
+{% else %}
+<p>Please login to see this page.</p>
+{% endif %}
+{% endif %}
+
+<form method="post" action="{% url 'login' %}" >
+    {% csrf_token %}
+    <div class="row">
+        <div class="col">
+            {{ form.username.label_tag }}
+        </div>
+        <div class="col">
+            {{ form.username }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ form.password.label_tag }}
+        </div>
+        <div class="col">
+            {{ form.password }}
+        </div>
+    </div>
+    <div class="col-sm-4 mx-auto">
+        <input type="submit" value="login" class="btn btn-dark"/>
+    </div>
+    <input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+{% comment %}
+{# Assumes you setup the password_reset view in your URLconf #}
+<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+{% endcomment %}
+
+{% endblock %}
+

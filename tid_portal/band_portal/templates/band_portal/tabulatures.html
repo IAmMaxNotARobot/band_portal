@@ -1,0 +1,26 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'Tabulatures' %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'Tabulatures' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+<div class="btn-toolbar mb-2 mb-md-0">
+    <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:tabulature_create' %}">New tabulature</a>
+</div>
+{% endblock %}
+
+{% block Content %}
+
+{% for tabulature in tabulatures %}
+    <a href="{% url 'band_portal:tabulature' tabulature.id %}" class="text-secondary">
+            {{ tabulature.name}}
+    </a>
+<br />
+{% endfor %}
+{% endblock %}

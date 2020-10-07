@@ -1,0 +1,50 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{{ project.name }} {% trans 'add lyrics' %}
+{% endblock %}
+
+{% block SectionTitle %}
+<a class="text-secondary text-decoration-none" href="{% url 'band_portal:projects' %}">{% trans 'Projects| '%}</a>
+<a class="text-secondary text-decoration-none" href="{% url 'band_portal:project' project.slug %}">{{ project.name }}| </a> {% trans 'add lyrics' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+
+{% if project.lyrics %}
+    <div class="row">
+        <div>
+            {% trans 'Current lyrics: ' %}
+            <a href="{{ project.lyrics.file.url }}">{{ project.lyrics.filename }}</a>
+        </div>
+    </div>
+{% endif %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <span class="text-secondary">{% trans 'Select existing lyrics or choose file' %}</span>
+    </div>
+    <div class="row m-2">
+        <select name="project_lyrics" id="id_project_lyrics" class="border-bottom border-top-0 border-right-0 border-left-0" >
+            <option value="None"> {% trans 'Choose existing lyrics' %} </option>
+            {% for lyrics in lyrics_list %}
+                <option value="{{ lyrics.id }}" {% if lyrics == project.lyrics %} selected {% endif %} >{{ lyrics.filename }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="row m-2">
+        <label class="btn btn-primary">
+            {% trans 'Browse' %}
+            <input type="file" name="project_lyrics_file" class="form-control-file form-control-sm m-2" hidden>
+        </label>
+    </div>
+    <div class="row m-2">
+        <button type="submit" class="btn btn-dark">{% trans 'Save' %}</button>
+    </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{{ project.name }}
+{% endblock %}
+
+{% block SectionTitle %}
+<a class="text-secondary text-decoration-none" href="{% url 'band_portal:projects' %}">{% trans 'Projects| '%}</a>
+{{ project.name }}
+{% endblock %}
+
+{% block AdditionalButtons %}
+<div class="btn-toolbar mb-2 mb-md-0">
+    <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_edit_name' project.slug %}">{% trans 'Rename' %}</a>
+</div>
+{% endblock %}
+
+{% block Content %}
+{% comment %}
+{% if project.is_released %}
+<span class="text-success">Released</span>
+{% else %}
+Not released
+{% endif %}
+<br />
+{% endcomment %}
+
+<p>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h3> {% trans 'Statuses' %} </h3>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_edit_statuses' project.slug %}">{% trans 'Change status' %}</a>
+    </div>
+</div>
+
+<div>
+    <table>
+    {% for status_category in project.statuses.all %}
+        <tr>
+            <td>
+                {{ status_category.category }}
+            </td>
+            <td>
+                <span class="{{ status_category.status.styling_class }}"> {{ status_category.status.value }} </span>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h3> {% trans 'Related objects' %} </h3>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_add_resource_file' project.slug %}">{% trans 'Add file' %}</a>
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_add_related_url' project.slug %}">{% trans 'Add URL' %}</a>
+        {% if not project.tabulature %}
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_add_tabulature' project.slug %}">{% trans 'Add tabulature' %}</a>
+        {% else %}
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_add_tabulature' project.slug %}">{% trans 'Manage tabulature' %}</a>
+        {% endif %}
+        {% if not project.lyrics %}
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_add_lyrics' project.slug %}">{% trans 'Add Lyrics' %}</a>
+        {% else %}
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_add_lyrics' project.slug %}">{% trans 'Manage Lyrics' %}</a>
+        {% endif %}
+    </div>
+</div>
+<div>
+    {% if project.tabulature %}
+        {% if project.tabulature.tabulaturefile_set %}
+            <H6>{% trans 'Actual tabulatures' %}</H6>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a class="text-secondary ml-2" href="{% url 'band_portal:tabulature' project.tabulature.id %}"> {% trans 'manage' %} </a>
+                    {% comment %}
+                    <!-- TODO: Нужно ли это? -->
+                    <a class="text-secondary ml-2" href="{% url 'band_portal:under_construction' %}"> {% trans 'untie' %} </a>
+                    {% endcomment %}
+                </div>
+            <ul>
+            {% for tab in project.tabulature.tabulaturefile_set.all %}
+                {% if tab.is_actual %}
+                <li>
+                    <a href="{{ tab.file.url }}">{{ tab.filename }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endif %}
+    {% if project.lyrics %}
+    <a class="text-secondary" href="#lyrics{{ project.id }}" data-toggle="collapse">{% trans 'Lyrics' %}</a>
+    <div id="lyrics{{ project.id }}" class="collapse">
+    {{ project.lyrics.show_lyrics|linebreaks }}
+    </div>
+    {% endif %}
+    {% if related_urls %}
+    <div>
+        <h6>{% trans 'Related URLs'%}</h6>
+        <ul>
+        {% for url in related_urls %}
+            <li>
+                <a class="text-secondary" href="{{ url.url }}" target="_blank">{{ url.description }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    {% if resource_files %}
+    <div>
+        <h6>{% trans 'Related files'%}</h6>
+        <ul>
+        {% for file in resource_files %}
+            <li>
+                <a class="text-secondary" href="{{ file.file.url }}" target="_blank">{{ file.description }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h3> {% trans 'Events and Notes' %} </h3>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_add_event' project.slug %}">{% trans 'New note' %}</a>
+    </div>
+</div>
+{% for event in events%}
+<div>
+    <p>
+        {{ event.note|linebreaksbr }}
+        <br />
+        <span class="text-secondary small">
+            {% if event.author %}
+            {{ event.author.last_name }} {{ event.author.first_name }} -
+            {% endif %}
+            {{ event.pub_date }}</span>
+    </p>
+</div>
+{% endfor %}
+
+{% endblock %}

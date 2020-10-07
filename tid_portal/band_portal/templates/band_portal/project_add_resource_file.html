@@ -1,0 +1,44 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{{ project.name }} {% trans 'add resource file' %}
+{% endblock %}
+
+{% block SectionTitle %}
+<a class="text-secondary text-decoration-none" href="{% url 'band_portal:projects' %}">{% trans 'Projects| '%}</a>
+<a class="text-secondary text-decoration-none" href="{% url 'band_portal:project' project.slug %}">{{ project.name }}| </a> {% trans 'add resource file' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+    </div>
+    <div class="row m-2">
+        <div>
+            <label class="text-secondary">{% trans 'File description' %} </label>
+            <br />
+            <input type="text" class="form-control-sm m-2" name="project_file_description">
+        </div>
+    </div>
+    <div class="row m-2">
+        <div>
+            <label class="text-secondary">{% trans 'Select resource file' %} </label>
+            <br />
+            <label class="btn btn-primary">
+                {% trans 'Browse' %}
+                <input type="file" name="project_file" class="form-control-file form-control-sm m-2" hidden>
+            </label>
+        </div>
+    </div>
+    <div class="row m-2">
+        <button type="submit" class="btn btn-dark">{% trans 'Save' %}</button>
+    </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'registration/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'Logged out!' %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'Logged out!' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+  <p>Logged out!</p>
+  <a href="{% url 'login'%}">Click here to login again.</a>
+{% endblock %}
+
+

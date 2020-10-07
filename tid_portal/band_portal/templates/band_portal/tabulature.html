@@ -1,0 +1,52 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'Tabulature' %} {{ tabulature.name }}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'Tabulature' %} {{ tabulature.name }}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+
+<h6>{% trans 'Used in:' %}</h6>
+{% if project %}
+   <a href="{% url 'band_portal:project' project.slug %}"> {% trans 'Project' %} {{ project }} </a><br />
+{% endif %}
+{% if song %}
+   <a href="{% url 'band_portal:song' song.artist song.name %}"> {% trans 'Song' %} {{ song }} </a><br />
+{% endif %}
+
+<br />
+<h6> {% trans 'Tab files:' %}</h6>
+<div>
+    <form method="post" action="{% url 'band_portal:tabulature_file_add' tabulature.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="song_tabulature_file" class="form-control-file form-control-sm m-2" >
+        <button type="submit" class="btn btn-dark m-3">{% trans 'Add file' %}</button>
+    </form>
+</div>
+<div>
+{% for tab in tabulature_files %}
+<span {% if tab.is_actual %} class="text-success" {% endif %}>
+    {{ tab.filename }}
+</span>
+{% trans 'actual tab:' %}
+{% if tab.is_actual %}
+    <a href="{% url 'band_portal:tabulature_file_actuality' tab.id  %}" class="text-success"> {% trans 'yes' %}</a>
+{% else %}
+    <a href="{% url 'band_portal:tabulature_file_actuality' tab.id %}"> {% trans 'no' %}</a>
+{% endif %}
+
+<a href="{% url 'band_portal:tabulature_file_delete' tab.id %}" class="text-danger">delete</a>
+
+<br />
+{% endfor %}
+</div>
+
+{% endblock %}

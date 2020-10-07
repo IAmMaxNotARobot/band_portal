@@ -1,0 +1,20 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{{ project.name }}
+{% block TitleAddition %}
+{% endblock %}
+{% endblock %}
+
+{% block SectionTitle %}
+<a class="text-secondary text-decoration-none" href="{% url 'band_portal:projects' %}">{% trans 'Projects| '%}</a>
+<a class="text-secondary text-decoration-none" href="{% url 'band_portal:project' project.slug %}">{{ project.name }}| </a>
+{% block SectionTitleAddition %}
+
+{% endblock %}
+{% endblock %}
+
+{% block Content %}
+
+{% endblock %}

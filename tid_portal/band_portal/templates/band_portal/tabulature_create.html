@@ -1,0 +1,24 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'New Tabulature' %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'New Tabulature' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        {{ form }}
+    </div>
+     <button type="submit" class="btn btn-dark m-3">{% trans 'Save' %}</button>
+</form>
+
+{% endblock %}

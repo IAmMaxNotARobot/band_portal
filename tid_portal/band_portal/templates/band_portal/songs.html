@@ -1,0 +1,37 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'Songs' %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'Songs' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+<div class="btn-toolbar mb-2 mb-md-0">
+    <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:song_create' %}">{% trans 'Add song' %}</a>
+</div>
+{% endblock %}
+
+{% block Content %}
+{% for song in songs %}
+<div>
+        <a href="{% url 'band_portal:song' song.artist song.name %}" class="text-secondary">
+        {{ song.artist }} - {{ song.name }} ({{song.tempo}})
+    </a>
+        {% if song.tabulature.tabulaturefile_set %}
+            {% for tab in song.tabulature.tabulaturefile_set.all %}
+                <ul>
+                {% if tab.is_actual %}
+                    <li>
+                        <a href="{{ tab.file.url }}">{{ tab.filename }}</a>
+                    </li>
+                {% endif %}
+                </ul>
+            {% endfor %}
+        {% endif %}
+</div>
+{% endfor %}
+{% endblock %}

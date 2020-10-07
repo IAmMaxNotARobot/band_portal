@@ -1,0 +1,39 @@
+{% extends 'band_portal/project_add_base.html' %}
+{% load i18n %}
+
+{% block TitleAddition %}
+{% trans 'Edit statuses' %}
+{% endblock %}
+
+{% block SectionTitleAddition %}
+{% trans 'Edit statuses' %}
+{% endblock %}
+
+{% block Content %}
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <table>
+            {% for status_category in project.statuses.all %}
+            <tr>
+                <td>
+                    {{ status_category.category }}
+                </td>
+                <td>
+                    <select name="status_{{status_category.category.id}}" class="border-bottom border-top-0 border-right-0 border-left-0" >
+                        {% for status_value in status_values %}
+                        {{ status_value }}
+                        <option value="{{ status_value.id }}" {% if status_category.status == status_value %} selected {% endif %} >{{ status_value.value }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-dark">{% trans 'Save' %}</button>
+    </div>
+</form>
+
+{% endblock %}

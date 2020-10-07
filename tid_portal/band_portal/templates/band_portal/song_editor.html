@@ -1,0 +1,85 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% if song.artist %}
+{{ song.artist }} - {{ song.name }}
+{% else %}
+{% trans 'New song' %}
+{% endif %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% if song.artist %}
+{{ song.artist }} - {{ song.name }}
+{% else %}
+{% trans 'New song' %}
+{% endif %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+<form action="{% url 'band_portal:song_update' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+        <input type="hidden" name="song_id" class="form-control form-control-sm m-2"  value="{{ song.id }}" readonly hidden>
+    </div>
+    <div>
+        <label>{% trans 'Song name:' %} </label>
+        <input type="text" name="song_name" class="form-control form-control-sm m-2" value="{{ song.name }}">
+    </div>
+    <div>
+        <label>{% trans 'Artist name: ' %} </label>
+        <input type="text" name="song_artist" class="form-control form-control-sm m-2" value="{{ song.artist }}">
+    </div>
+    <div>
+        <label>{% trans 'Tempo: ' %}</label>
+        <input type="number" name="song_tempo" class="form-control form-control-sm m-2"  value="{{ song.tempo }}">
+    </div>
+
+    <div>
+        <label>{% trans 'Tabulature: ' %} </label>
+        {% if song.tabulature %}
+        <br />
+        {% trans 'Current tabulature: ' %} <a href="{% url 'band_portal:tabulature' song.tabulature.id %}">{{song.tabulature}}</a>
+        {% endif %}
+        <br />
+        <span class="text-secondary">{% trans 'Select existing tabulature or choose file' %}</span>
+        <br />
+        <select name="song_tabulature" id="id_song_tabulature" class="border-bottom border-top-0 border-right-0 border-left-0" >
+            <option value="None"> {% trans 'Choose existing tabulature' %} </option>
+            {% for tabulature in tabulatures %}
+                <option value="{{ tabulature.id }}" {% if tabulature == song.tabulature %} selected {% endif %} >{{ tabulature }}</option>
+            {% endfor %}
+        </select>
+        <input type="file" name="song_tabulature_file" class="form-control-file form-control-sm m-2" >
+    </div>
+
+    <div>
+        <label>{% trans 'Lyrics: ' %}</label>
+        {% if song.lyrics %}
+        <br />
+        {% trans 'Current lyrics: ' %} <a href="{{ song.lyrics.file.url }}">{{ song.lyrics.filename }}</a>
+        {% endif %}
+        <br />
+        <span class="text-secondary">{% trans 'Select existing lyrics or choose file' %}</span>
+        <br />
+        <select name="song_lyrics" id="id_song_lyrics" class="border-bottom border-top-0 border-right-0 border-left-0" >
+            <option value="None"> {% trans 'Choose existing lyrics' %} </option>
+            {% for lyrics in lyrics_list %}
+                <option value="{{ lyrics.id }}" {% if lyrics == song.lyrics %} selected {% endif %} >{{ lyrics.filename }}</option>
+            {% endfor %}
+        </select>
+        <input type="file" name="song_lyrics_file" class="form-control-file form-control-sm m-2" >
+    </div>
+
+    <div>
+        <input type="checkbox" name="song_played" id="song_played" class="" value="True"
+        {% if song.played_now or not song %} checked {% endif %} >
+        <label for="song_played">{% trans 'Is played now:' %}</label>
+    </div>
+    <button type="submit" class="btn btn-dark m-3">{% trans 'Save' %}</button>
+</form>
+{% endblock %}

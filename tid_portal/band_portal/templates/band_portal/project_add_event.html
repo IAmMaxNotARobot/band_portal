@@ -1,0 +1,26 @@
+{% extends 'band_portal/project_add_base.html' %}
+{% load i18n %}
+
+{% block TitleAddition %}
+{% trans 'Create event' %}
+{% endblock %}
+
+{% block SectionTitleAddition %}
+{% trans 'Create event' %}
+{% endblock %}
+
+{% block Content %}
+
+<form  method="post">
+    {% csrf_token %}
+    <div class="row">
+        <label>{% trans "Event note" %}</label>
+        <textarea class="form-control"  rows="3" name="projectevent_note"></textarea>
+    </div>
+    <div class="row pt-2">
+        <button type="submit" class="btn btn-dark">{% trans 'Save' %}</button>
+    </div>
+</form>
+
+
+{% endblock %}

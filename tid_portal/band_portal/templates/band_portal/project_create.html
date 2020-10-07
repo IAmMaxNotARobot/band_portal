@@ -1,0 +1,23 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+New project
+{% endblock %}
+
+{% block SectionTitle %}
+New project
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+<form action="{% url 'band_portal:project_create' %}" method="post">
+    {% csrf_token %}
+    <div>
+        <input type="text" name="project_name" class="form-control form-control-sm m-2">
+    </div>
+    <button type="submit" class="btn btn-dark m-3">{% trans 'Save' %}</button>
+</form>
+{% endblock %}

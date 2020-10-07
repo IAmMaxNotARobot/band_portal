@@ -1,0 +1,31 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'Live List' %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'Live List' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+
+{% for song in live_songs %}
+<h4>{{ song }} </h4>
+<span class="text-secondary"> {{ song.tempo }} </span>
+{% if song.lyrics %}
+    <div>
+        <a href="#lyrics{{ song.id }}" data-toggle="collapse">{% trans 'Lyrics' %}</a>
+        <div id="lyrics{{ song.id }}" class="collapse">
+            {{ song.lyrics.show_lyrics|linebreaks }}
+        </div>
+    </div>
+{% endif %}
+
+{% endfor %}
+
+{% endblock %}

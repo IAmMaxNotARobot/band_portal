@@ -1,0 +1,65 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+New Song
+{% endblock %}
+
+{% block SectionTitle %}
+New song
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+<form action="{% url 'band_portal:song_create' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+        <label>Song name: </label>
+        <input type="text" name="song_name" class="form-control form-control-sm m-2">
+    </div>
+    <div>
+        <label>Artist name: </label>
+        <input type="text" name="song_artist" class="form-control form-control-sm m-2">
+    </div>
+    <div>
+        <label>Tempo: </label>
+        <input type="number" name="song_tempo" class="form-control form-control-sm m-2">
+    </div>
+
+    <div>
+        <label>Tabulature: </label>
+        <br />
+        <span class="text-secondary">Select existing tabulature or choose file</span>
+        <br />
+        <select name="song_tabulature" id="id_song_tabulature" class="border-bottom border-top-0 border-right-0 border-left-0" >
+            <option value="None"> {% trans 'Choose existing tabulature' %} </option>
+            {% for tabulature in tabulatures %}
+                <option value="{{ tabulature.id }}" {% if tabulature == song.tabulature %} selected {% endif %} >{{ tabulature }}</option>
+            {% endfor %}
+        </select>
+        <input type="file" name="song_tabulature_file" class="form-control-file form-control-sm m-2" >
+    </div>
+
+    <div>
+        <label>Lyrics: </label>
+        {% if song.lyrics %}
+        <br />
+        {% trans 'Current lyrics: ' %} <a href="{{ song.lyrics.file.url }}">{{ song.lyrics.filename }}</a>
+        {% endif %}
+        <br />
+        <span class="text-secondary">Select existing lyrics or choose file</span>
+        <br />
+        <select name="song_lyrics" id="id_song_lyrics" class="border-bottom border-top-0 border-right-0 border-left-0" >
+            <option value="None"> {% trans 'Choose existing lyrics' %} </option>
+            {% for lyrics in lyrics_list %}
+                <option value="{{ lyrics.id }}" {% if lyrics == song.lyrics %} selected {% endif %} >{{ lyrics.filename }}</option>
+            {% endfor %}
+        </select>
+        <input type="file" name="song_lyrics_file" class="form-control-file form-control-sm m-2" >
+    </div>
+
+    <button type="submit" class="btn btn-dark m-3">{% trans 'Save' %}</button>
+</form>
+{% endblock %}

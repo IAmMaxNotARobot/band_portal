@@ -1,0 +1,78 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'Dashboard' %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'Dashboard' %}
+{% endblock %}
+
+
+{% block Content %}
+<!-- <h3>Actual events</h3>
+<a href="{% url 'band_portal:projects' %}"> Projects </a>
+-->
+<div>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+        <h4>{% trans 'Actual song list' %}</h4>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a type="button" class="btn btn-sm btn-outline-secondary mr-3" href="{% url 'band_portal:songs' %}">{% trans 'Song list' %}</a>
+            <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:song_create' %}">{% trans 'Add song' %}</a>
+        </div>
+    </div>
+    <div>
+    {% for song in songs %}
+    {{ song.artist }} - {{ song.name }} ({{song.tempo}})
+    <br />
+    {% endfor  %}
+    </div>
+</div>
+
+<div>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+        <h4>{% trans 'Last Project Events' %}</h4>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a type="button" class="btn btn-sm btn-outline-secondary mr-3" href="{% url 'band_portal:projects' %}">{% trans 'Projects' %}</a>
+            <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_create' %}">{% trans 'Add project' %}</a>
+        </div>
+    </div>
+    <div>
+    {% for event in last_events %}
+        <a href="{% url 'band_portal:project' event.project.slug %}"> {{ event.project.name }} </a>
+    {{ event.note }}
+    <br />
+    {% endfor  %}
+    </div>
+</div>
+
+<div>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+        <h4>{% trans 'Live song list' %}</h4>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:songs_live_list' %}">{% trans 'Manage live list' %}</a>
+        </div>
+    </div>
+    <div>
+    {% for song in live_songs %}
+    {{song.live_position }}: {{ song.artist }} - {{ song.name }} ({{song.tempo}}) {% trans 'lyrics' %} {% trans 'tabulature' %}
+    <br />
+    {% endfor  %}
+    </div>
+</div>
+
+
+<div>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+        <h4>{% trans 'Unplayed songs' %}</h4>
+    </div>
+    <div>
+    {% for song in unplayed_songs %}
+    {{ song.artist }} - {{ song.name }}
+    <br />
+    {% endfor  %}
+    </div>
+</div>
+
+{% endblock %}

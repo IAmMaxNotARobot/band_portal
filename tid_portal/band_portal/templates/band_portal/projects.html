@@ -1,0 +1,29 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'Projects' %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'Projects' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+<div class="btn-toolbar mb-2 mb-md-0">
+    <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_create' %}">{% trans 'Add project' %}</a>
+</div>
+{% endblock %}
+
+{% block Content %}
+{% for project in projects %}
+    <a href="{% url 'band_portal:project' project.slug %}">
+        <H5>
+            {{ project.name}}
+        </H5>
+        <h6> {{project.created_date}} </h6>
+
+    </a>
+<br />
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{{ project.name }} {% trans 'rename' %}
+{% endblock %}
+
+{% block SectionTitle %}
+<a class="text-secondary text-decoration-none" href="{% url 'band_portal:projects' %}">{% trans 'Projects| '%}</a>
+<a class="text-secondary text-decoration-none" href="{% url 'band_portal:project' project.slug %}">{{ project.name }}| </a> {% trans 'rename' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+
+{% if error_message %}
+<span class="text-danger"> {{ error_message }} </span>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="row m-2">
+        <label class="text-secondary">{% trans 'Project name' %} </label>
+        <br />
+        <input type="text" name="project_name" class="form-control form-control-sm m-2" value="{{ project.name }}">
+    </div>
+    <div class="row m-2">
+        <button type="submit" class="btn btn-dark">{% trans 'Save' %}</button>
+    </div>
+</form>
+
+{% endblock %}

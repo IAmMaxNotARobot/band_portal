@@ -1,0 +1,62 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{{ song.artist }} - {{ song.name }}
+{% endblock %}
+
+{% block SectionTitle %}
+{{ song.artist }} - {{ song.name }}
+{% endblock %}
+
+{% block AdditionalButtons %}
+<div class="btn-toolbar mb-2 mb-md-0">
+    <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:song_edit' song.artist song.name %}">{% trans 'Edit song' %}</a>
+</div>
+{% endblock %}
+
+{% block Content %}
+    <div>
+        <div class="pl-3">
+            <label>{% trans 'Tempo: ' %} {{ song.tempo }}</label>
+        </div>
+    </div>
+    {% if song.tabulature %}
+    <div>
+        <div class="bg-info text-white p-3">
+            <label>{% trans 'Tabulature: ' %} </label>
+            <a href="{% url 'band_portal:tabulature' song.tabulature.id %}" class="text-light">{{song.tabulature}}</a>
+        </div>
+        <div class="bg-light mb-2 pb-3 pt-3">
+            <ul>
+                {% for tab in song.tabulature.tabulaturefile_set.all %}
+                {% if tab.is_actual %}
+                    <li>
+                        <a href="{{ tab.file.url }}">{{ tab.filename }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+    {% if song.lyrics %}
+    <div>
+        <div class="bg-info text-white p-3">
+            <label>{% trans 'Lyrics: ' %}</label>
+            <a href="{{ song.lyrics.file.url }}" class="text-light">{{ song.lyrics.filename }}</a>
+        </div>
+        <div class="bg-light p-3 mb-2 ">
+            {{ song.lyrics.show_lyrics|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+    {% if song.played_now %}
+    <div>
+        <div class="p-3">
+            <label>{% trans 'Is played now:' %}</label>
+        </div>
+    </div>
+    {% endif %}
+
+{% endblock %}
