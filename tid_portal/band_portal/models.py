@@ -18,7 +18,7 @@ __all__ = ['Lyrics', 'Tabulature', 'TabulatureFile', 'Song', 'Project',
            'ProjectEvent', 'ProjectResourceFile', 'ProjectRelatedURL',
            'StatusValue', 'StatusCategory', 'ProjectStatusCategory']
 
-logger.add("models_debug.log", format="{time} {level} {message}", rotation="2 week", compression="zip")
+logger.add(settings.BASE_DIR + "/debug.log", format="{time} {level} {message}", rotation="2 week", compression="zip")
 
 
 class Lyrics(models.Model):
@@ -38,7 +38,8 @@ class Lyrics(models.Model):
         :return:
         """
 
-        f = open(self.file.url[1:], encoding="utf-8")
+        logger.info("Trying to read file: {}".format(self.file.path))
+        f = open(self.file.path, encoding="utf-8")
         file_content = f.read()
         f.close()
         return file_content
@@ -369,7 +370,5 @@ def init_project_statuses(sender, instance, **kwargs):
             project_status_category.project = project
             project_status_category.status = default_status_value
             project_status_category.save()
-
-
 
 

@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block Content %}
-<h4>Live list</h4>
+<h4>{% trans 'Live list' %}</h4>
 <div id="sortable01" class="list-group col">
     {% for song in live_songs %}
     <div class="list-group-item" id="{{song.id}}">
@@ -23,7 +23,7 @@
     {% endfor %}
 </div>
 <br />
-<h4>Other songs</h4>
+<h4>{% trans 'Other songs' %}</h4>
 <div id="sortable02" class="list-group col">
     {% for song in all_songs %}
     <div class="list-group-item" id="{{song.id}}">
@@ -38,7 +38,7 @@
 <input type="hidden" id="orderingInput" name="ordering">
 </form>
 
-<button id="saveOrdering" class="btn btn-outline-primary btn-lg float-right mr-2" onclick="saveOrdering()">Save ordering</button>
+<button id="saveOrdering" class="btn btn-outline-primary btn-lg float-right mr-2" onclick="saveOrdering()">{% trans 'Save ordering' %}</button>
 
 <p id="demo"></p>
 {% endblock %}

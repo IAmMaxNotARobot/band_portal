@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-07 18:08+0700\n"
+"POT-Creation-Date: 2020-10-08 17:10+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,6 +41,22 @@ msgstr "Выход выполнен"
 msgid "Login"
 msgstr "Вход"
 
+#: .\accounts\templates\registration\login.html:18
+msgid "Your username and password didn't match. Please try again."
+msgstr "Указанное сочетание имени пользователя и пароля не найдено. Попробуйте еще раз."
+
+#: .\accounts\templates\registration\login.html:23
+msgid ""
+"Your account doesn't have access to this page. To proceed, please login with "
+"an account that has access."
+msgstr "Аккаунт не имеент доступа к указанной странице. Для продолжения, войдите с аккаунтом, имеющим нужный доступ"
+
+#: .\accounts\templates\registration\login.html:47
+#, fuzzy
+#| msgid "Login"
+msgid "login"
+msgstr "Вход"
+
 #: .\accounts\templates\registration\password_change_done.html:5
 #: .\accounts\templates\registration\password_change_done.html:9
 msgid "Password changed!"
@@ -58,49 +74,61 @@ msgstr "Демо готово, но нужно переделать"
 msgid "Done"
 msgstr "Готово"
 
-#: .\band_portal\services.py:136
+#: .\band_portal\services.py:137
 #, fuzzy
 #| msgid "Status change"
 msgid "status changed to"
 msgstr "Изменение статуса"
 
-#: .\band_portal\templates\band_portal\base.html:53
-#: .\band_portal\templates\band_portal\base.html:60
+#: .\band_portal\templates\band_portal\base.html:50
+#: .\band_portal\templates\band_portal\base.html:66
+#: .\band_portal\templates\band_portal\base.html:75
+#: .\band_portal\templates\band_portal\base_backup.html:53
+#: .\band_portal\templates\band_portal\base_backup.html:60
 msgid "Sign out"
 msgstr "Выйти"
 
-#: .\band_portal\templates\band_portal\base.html:54
-#: .\band_portal\templates\band_portal\base.html:61
+#: .\band_portal\templates\band_portal\base.html:51
+#: .\band_portal\templates\band_portal\base.html:67
+#: .\band_portal\templates\band_portal\base.html:76
+#: .\band_portal\templates\band_portal\base_backup.html:54
+#: .\band_portal\templates\band_portal\base_backup.html:61
 msgid "Password change"
 msgstr "Изменение пароля"
 
-#: .\band_portal\templates\band_portal\base.html:75
+#: .\band_portal\templates\band_portal\base.html:90
+#: .\band_portal\templates\band_portal\base_backup.html:75
 #: .\band_portal\templates\band_portal\index.html:5
 #: .\band_portal\templates\band_portal\index.html:9
 msgid "Dashboard"
 msgstr "Обзорная панель"
 
-#: .\band_portal\templates\band_portal\base.html:87
+#: .\band_portal\templates\band_portal\base.html:102
+#: .\band_portal\templates\band_portal\base_backup.html:87
 #: .\band_portal\templates\band_portal\songs.html:5
 #: .\band_portal\templates\band_portal\songs.html:9
 msgid "Songs"
 msgstr "Песни"
 
-#: .\band_portal\templates\band_portal\base.html:93
+#: .\band_portal\templates\band_portal\base.html:108
+#: .\band_portal\templates\band_portal\base_backup.html:93
 msgid "Manage Live list"
 msgstr "Управление сетлистом"
 
-#: .\band_portal\templates\band_portal\base.html:99
+#: .\band_portal\templates\band_portal\base.html:114
+#: .\band_portal\templates\band_portal\base_backup.html:99
 msgid "Live List Lookup"
 msgstr "Просмотр сетлиста"
 
-#: .\band_portal\templates\band_portal\base.html:105
+#: .\band_portal\templates\band_portal\base.html:120
+#: .\band_portal\templates\band_portal\base_backup.html:105
 #: .\band_portal\templates\band_portal\tabulatures.html:5
 #: .\band_portal\templates\band_portal\tabulatures.html:9
 msgid "Tabulatures"
 msgstr "Табулатуры"
 
-#: .\band_portal\templates\band_portal\base.html:111
+#: .\band_portal\templates\band_portal\base.html:126
+#: .\band_portal\templates\band_portal\base_backup.html:111
 #: .\band_portal\templates\band_portal\index.html:37
 #: .\band_portal\templates\band_portal\projects.html:5
 #: .\band_portal\templates\band_portal\projects.html:9
@@ -208,30 +236,26 @@ msgstr "Актуальные табулатуры"
 msgid "manage"
 msgstr "редактировать"
 
-#: .\band_portal\templates\band_portal\project.html:75
-msgid "untie"
-msgstr "отвязать"
-
-#: .\band_portal\templates\band_portal\project.html:89
-#: .\band_portal\templates\band_portal\songs_live_list_lookup.html:22
+#: .\band_portal\templates\band_portal\project.html:93
+#: .\band_portal\templates\band_portal\songs_live_list_lookup.html:23
 msgid "Lyrics"
 msgstr "Текст"
 
-#: .\band_portal\templates\band_portal\project.html:96
+#: .\band_portal\templates\band_portal\project.html:100
 msgid "Related URLs"
 msgstr "Связанные ссылки"
 
-#: .\band_portal\templates\band_portal\project.html:108
+#: .\band_portal\templates\band_portal\project.html:112
 msgid "Related files"
 msgstr "Связанные файлы"
 
-#: .\band_portal\templates\band_portal\project.html:121
+#: .\band_portal\templates\band_portal\project.html:125
 #, fuzzy
 #| msgid "Event note"
 msgid "Events and Notes"
 msgstr "Заметки и события"
 
-#: .\band_portal\templates\band_portal\project.html:123
+#: .\band_portal\templates\band_portal\project.html:127
 #, fuzzy
 #| msgid "New event"
 msgid "New note"
@@ -330,6 +354,13 @@ msgstr "Выбрать существующую табулатуру или фа
 msgid "Choose existing tabulature"
 msgstr "Выбрать существующую табулатуру"
 
+#: .\band_portal\templates\band_portal\project_create.html:5
+#: .\band_portal\templates\band_portal\project_create.html:9
+#, fuzzy
+#| msgid "Add project"
+msgid "New project"
+msgstr "Добавить проект"
+
 #: .\band_portal\templates\band_portal\project_edit_name.html:5
 #: .\band_portal\templates\band_portal\project_edit_name.html:10
 msgid "rename"
@@ -350,7 +381,7 @@ msgstr "Редактировать статусы"
 #, fuzzy
 #| msgid "Add song"
 msgid "Edit song"
-msgstr "Добавить песню"
+msgstr "Редактировать песню"
 
 #: .\band_portal\templates\band_portal\song.html:21
 #: .\band_portal\templates\band_portal\song_editor.html:38
@@ -395,6 +426,22 @@ msgstr "Используемая табулатура: "
 #: .\band_portal\templates\band_portal\songs_live_list.html:9
 msgid "Manage Live List"
 msgstr "Управление сетлистом"
+
+#: .\band_portal\templates\band_portal\songs_live_list.html:16
+#, fuzzy
+#| msgid "Live List"
+msgid "Live list"
+msgstr "Сетлист"
+
+#: .\band_portal\templates\band_portal\songs_live_list.html:26
+#, fuzzy
+#| msgid "Add song"
+msgid "Other songs"
+msgstr "Не концертный список"
+
+#: .\band_portal\templates\band_portal\songs_live_list.html:41
+msgid "Save ordering"
+msgstr "Сохранить порядок"
 
 #: .\band_portal\templates\band_portal\songs_live_list_lookup.html:5
 #: .\band_portal\templates\band_portal\songs_live_list_lookup.html:9
@@ -442,6 +489,9 @@ msgstr "Новая Табулатура"
 #: .\band_portal\views.py:99
 msgid "Name allready exists. Choose another name!"
 msgstr "Такое имя уже существует. Выберите другое имя!"
+
+#~ msgid "untie"
+#~ msgstr "отвязать"
 
 #~ msgid "Status change"
 #~ msgstr "Изменение статуса"

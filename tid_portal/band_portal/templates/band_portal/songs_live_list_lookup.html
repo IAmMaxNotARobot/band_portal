@@ -14,18 +14,19 @@
 
 {% block Content %}
 
-{% for song in live_songs %}
-<h4>{{ song }} </h4>
-<span class="text-secondary"> {{ song.tempo }} </span>
-{% if song.lyrics %}
-    <div>
-        <a href="#lyrics{{ song.id }}" data-toggle="collapse">{% trans 'Lyrics' %}</a>
-        <div id="lyrics{{ song.id }}" class="collapse">
-            {{ song.lyrics.show_lyrics|linebreaks }}
-        </div>
-    </div>
+{% if live_songs %}
+    {% for song in live_songs %}
+        <h4>{{ song }} </h4>
+        <span class="text-secondary"> {{ song.tempo }} </span>
+        {% if song.lyrics %}
+            <div>
+                <a href="#lyrics{{ song.id }}" data-toggle="collapse">{% trans 'Lyrics' %}</a>
+                <div id="lyrics{{ song.id }}" class="collapse">
+                    {{ song.lyrics.show_lyrics|linebreaks }}
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endif %}
-
-{% endfor %}
 
 {% endblock %}

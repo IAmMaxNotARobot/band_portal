@@ -25,7 +25,7 @@
         <select name="project_tabulature" id="id_project_tabulature" class="border-bottom border-top-0 border-right-0 border-left-0" >
             <option value="None"> {% trans 'Choose existing tabulature' %} </option>
             {% for tabulature in tabulatures %}
-            <option value="{{ tabulature.id }}" {% if tabulature == project.tabulature %} selected {% endif %} >{{ tabulature }}</option>
+                <option value="{{ tabulature.id }}" {% if tabulature == project.tabulature %} selected {% endif %} >{{ tabulature }}</option>
             {% endfor %}
         </select>
     </div>

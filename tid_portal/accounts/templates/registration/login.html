@@ -15,15 +15,13 @@
 {% block Content %}
 
 {% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
+<p>{% trans "Your username and password didn't match. Please try again." %}</p>
 {% endif %}
 
 {% if next %}
 {% if user.is_authenticated %}
-<p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
+<p>{% trans "Your account doesn't have access to this page. To proceed, please login with an account that has access." %}</p>
 {% else %}
-<p>Please login to see this page.</p>
 {% endif %}
 {% endif %}
 
@@ -46,15 +44,10 @@
         </div>
     </div>
     <div class="col-sm-4 mx-auto">
-        <input type="submit" value="login" class="btn btn-dark"/>
+        <input type="submit" value="{% trans 'login' %}" class="btn btn-dark"/>
     </div>
     <input type="hidden" name="next" value="{{ next }}" />
 </form>
-
-{% comment %}
-{# Assumes you setup the password_reset view in your URLconf #}
-<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
-{% endcomment %}
 
 {% endblock %}
 

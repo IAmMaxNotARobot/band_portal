@@ -18,7 +18,7 @@ from .services import *
 
 __all__ = []
 
-logger.add("models_debug.log", format="{time} {level} {message}", rotation="2 week", compression="zip")
+logger.add(settings.BASE_DIR + "/debug.log", format="{time} {level} {message}", rotation="2 week", compression="zip")
 
 
 def base_view(view):

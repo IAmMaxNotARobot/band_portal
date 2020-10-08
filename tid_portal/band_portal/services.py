@@ -9,11 +9,12 @@ from .exceptions import *
 from .models import *
 from .logic import *
 from .forms import *
+from tid_portal import settings
 
 __all__ = ['SongManager', 'ProjectEventManager', 'ProjectManager', 'TabulatureManager',
            'ProjectResourceFileManager', 'ProjectURLManager']
 
-logger.add("models_debug.log", format="{time} {level} {message}", rotation="2 week", compression="zip")
+logger.add(settings.BASE_DIR + "/debug.log", format="{time} {level} {message}", rotation="2 week", compression="zip")
 
 
 class SongManager():
@@ -215,7 +216,6 @@ class ProjectManager:
         if(project_tabulature and project_tabulature != 'None'):
             tabulature = Tabulature.objects.get(id=project_tabulature)
             project.tabulature = tabulature
-            return True
         elif(request_FILES and 'project_tabulature_file' in request_FILES):
             project_tabulature_file = request_FILES['project_tabulature_file']
             tabulature = Tabulature()
