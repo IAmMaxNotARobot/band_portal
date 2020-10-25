@@ -11,7 +11,8 @@
 
 {% block AdditionalButtons %}
 <div class="btn-toolbar mb-2 mb-md-0">
-    <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:tabulature_create' %}">New tabulature</a>
+    <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:tabulatures_download_actual' %}">{% trans 'Download actual' %}</a>
+    <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:tabulature_create' %}">{% trans 'New tabulature' %}</a>
 </div>
 {% endblock %}
 

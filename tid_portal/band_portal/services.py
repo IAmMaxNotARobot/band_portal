@@ -1,9 +1,14 @@
 from django.utils.translation import gettext as _
+from django.contrib.auth.models import User
 
 import uuid
 from loguru import logger
 from datetime import datetime
 from slugify import slugify
+import os
+import shutil
+import re
+from zipfile import ZipFile
 
 from .exceptions import *
 from .models import *
@@ -12,7 +17,7 @@ from .forms import *
 from tid_portal import settings
 
 __all__ = ['SongManager', 'ProjectEventManager', 'ProjectManager', 'TabulatureManager',
-           'ProjectResourceFileManager', 'ProjectURLManager']
+           'ProjectResourceFileManager', 'ProjectURLManager', 'ProjectTaskManager']
 
 logger.add(settings.BASE_DIR + "/debug.log", format="{time} {level} {message}", rotation="2 week", compression="zip")
 
@@ -22,14 +27,8 @@ class SongManager():
 
 
     @staticmethod
-    def update_song_by_post_data(request_POST, request_FILES) -> bool:
-        """
-        Check request data and update song
-        :param request_POST:
-        :param request_FILES:
-        :return: True on successifully save, otherwise False
-        """
-
+    def update_song_by_post_data(request_POST: dict, request_FILES: dict) -> bool:
+        """ Check request data and update song. Return True on successifully save, otherwise False """
 
         song_id = request_POST.get('song_id', False)
         song_name = request_POST.get('song_name', False)
@@ -79,7 +78,7 @@ class SongManager():
         return False
 
     @staticmethod
-    def live_list_update(request_POST) -> bool:
+    def live_list_update(request_POST: dict) -> bool:
         """ Update live list ordering """
 
         ordering = request_POST.get('ordering', False)
@@ -100,7 +99,7 @@ class ProjectEventManager:
 
 
     @staticmethod
-    def create_event(request_POST: dict, project_slug: str, user) -> bool:
+    def create_event(request_POST: dict, project_slug: str, user: User) -> bool:
         """ Create project event by user note """
 
         project = Project.objects.get(slug=project_slug)
@@ -117,7 +116,7 @@ class ProjectEventManager:
         return False
 
     @staticmethod
-    def create_event_by_status(request_POST: dict, project_slug: str, user) -> bool:
+    def create_event_by_status(request_POST: dict, project_slug: str, user: User) -> bool:
         """ Create project event by user note """
 
         project = Project.objects.get(slug=project_slug)
@@ -154,9 +153,8 @@ class ProjectManager:
 
 
     @staticmethod
-    def project_create(request_POST) -> str:
+    def project_create(request_POST: dict) -> str:
         """ Create new project from POST request """
-
 
         logger.info("Creating new project")
         project_name = request_POST.get('project_name', False)
@@ -172,7 +170,6 @@ class ProjectManager:
     def project_rename(request_POST: dict, project: Project):
         """ Rename existing project by POST request """
 
-
         logger.info("Renaming project")
         project_name = request_POST.get('project_name', False)
         check_project = Project.objects.filter(name=project_name).first()
@@ -186,9 +183,8 @@ class ProjectManager:
         return ""
 
     @staticmethod
-    def add_lyrics(project_slug, request_POST, request_FILES) -> bool:
+    def add_lyrics(project_slug: str, request_POST: dict, request_FILES: dict) -> bool:
         """ Create new Lyrics or add existing to project """
-
 
         logger.info("Adding lyrics to project")
         project = Project.objects.get(slug=project_slug)
@@ -207,7 +203,7 @@ class ProjectManager:
         return True
 
     @staticmethod
-    def add_tabulature(project_slug, request_POST, request_FILES) -> bool:
+    def add_tabulature(project_slug: str, request_POST: dict, request_FILES: dict) -> bool:
         """ Create tabulature related to project   """
 
         logger.info("Adding tabulature to project")
@@ -237,7 +233,6 @@ class TabulatureManager:
     def create_tabulature_by_post(request_POST: dict, request_FILES: dict):
         """ Create new tabulature with new tabulature file """
 
-
         logger.info("Creating new tabulature with file")
         form = TabulatureForm(request_POST, request_FILES)
         if(form.is_valid()):
@@ -252,7 +247,6 @@ class TabulatureManager:
     def file_actuality_change(tabulature_file_id: uuid.UUID):
         """ Toggle tabulature file actuality """
 
-
         logger.info("Toggling tabulature file actuality")
         tabulature_file = TabulatureFile.objects.get(pk=tabulature_file_id)
         tabulature_file.is_actual = not tabulature_file.is_actual
@@ -262,15 +256,13 @@ class TabulatureManager:
     def file_delete(tabulature_file_id: uuid.UUID):
         """ Delete tabulature file from Tabulature """
 
-
         logger.info("Deleting tabulature file")
         tabulature_file = TabulatureFile.objects.get(pk=tabulature_file_id)
         tabulature_file.delete()
 
     @staticmethod
-    def file_add(tabulature_id: uuid.UUID, request_FILES):
+    def file_add(tabulature_id: uuid.UUID, request_FILES: dict):
         """ Add new file to Tabulature """
-
 
         logger.info("Adding tabulature file to existing Tabulature")
         song_tabulature_file = request_FILES['song_tabulature_file']
@@ -278,13 +270,81 @@ class TabulatureManager:
             tabulature = Tabulature.objects.get(pk=tabulature_id)
             tabulature.create_tabulature_file(song_tabulature_file, True)
 
+    @staticmethod
+    def tabulature_archive(username: str, code: int) -> str:
+        """
+            create archive from all actual tabulatures, return archive path
+            code - defines songs set: 1 - actual, 2 - not actual
+        """
+
+        directory_name = os.path.join(settings.MEDIA_ROOT, username+"_archive_tmp")
+        try:
+            os.mkdir(directory_name)
+        except FileExistsError:
+            pass
+
+        archive_directory_name = os.path.join(settings.MEDIA_ROOT, username+"_archive")
+        if(os.path.isdir(archive_directory_name)):
+            shutil.rmtree(archive_directory_name)
+        os.mkdir(archive_directory_name)
+
+        actual_tabulatures = {}
+
+        if(code == 1):
+            archive_name_base = "takeitdown_actual"
+            song_list = Song.objects.played_only_on_practice()
+        elif(code == 2):
+            archive_name_base = "takeitdown_notactual"
+            song_list = Song.objects.not_played()
+
+        # choose actual tabulatures
+        for song in song_list:
+            if(song.tabulature is None):
+                continue
+            count = song.tabulature.tab_files.count()
+            if(count == 0):
+                continue
+            for tab in song.tabulature.tab_files.all():
+                similarity_counter = 0
+                while True:
+                    search_result = re.search("\.([\w\d]+)$", tab.file.path)
+                    extension = search_result.group(1)
+                    new_name = "{} - {}.{}".format(song.artist, song.name, extension)\
+                        if similarity_counter == 0 \
+                        else "{} - {} {}.{}".format(song.artist, song.name, similarity_counter, extension)
+
+                    if(new_name not in actual_tabulatures):
+                        break
+                    similarity_counter += 1
+
+                actual_tabulatures[new_name] = tab.file.path
+
+        # copy tabulatures to directory
+        new_files = []
+        for new_file_name, filename in actual_tabulatures.items():
+            shutil.copyfile(filename, "{}\\{}".format(directory_name, new_file_name))
+            new_files.append(new_file_name)
+
+        # archive files
+        archive_name = archive_name_base + datetime.now().strftime("_%Y_%m_%d__%H%M") + ".zip"
+        archive_path = os.path.join(settings.MEDIA_ROOT, archive_directory_name, archive_name)
+        with ZipFile(archive_path, "w") as archive:
+            for file in new_files:
+                archive.write("{}\\{}".format(directory_name, file), file)
+
+
+        # delete files
+        shutil.rmtree(directory_name)
+
+        return archive_path
+
 
 class ProjectResourceFileManager:
     """ Manages project resource files """
 
 
     @staticmethod
-    def create_project_resource_file(project_slug, request_POST, request_FILES) -> bool:
+    def create_project_resource_file(project_slug: str, request_POST: dict, request_FILES: dict) -> bool:
         """ Create file related to project   """
 
         logger.info("Creating new project resource file")
@@ -308,7 +368,7 @@ class ProjectURLManager:
 
 
     @staticmethod
-    def create_project_related_url(project_slug, request_POST) -> bool:
+    def create_project_related_url(project_slug: str, request_POST: dict) -> bool:
         """  Create URL related to project """
 
         logger.info("Creating new project related URL")
@@ -324,3 +384,27 @@ class ProjectURLManager:
             return True
         return False
 
+
+class ProjectTaskManager:
+    """ Manages Project tasks - creation, toggle on finished"""
+
+    @staticmethod
+    def create_from_post(request_post: dict, project: Project):
+
+        task = ProjectTask()
+        task.project = project
+        user_ids = request_post.getlist("users")
+        task.description = request_post["description"]
+        task.save()
+        for id in user_ids:
+            user = User.objects.get(id=id)
+            task.responsible_persons.add(user)
+
+        task.save()
+
+        #task.responsible_persons.add
+        #task.save()
+
+    @staticmethod
+    def check_finished():
+        pass

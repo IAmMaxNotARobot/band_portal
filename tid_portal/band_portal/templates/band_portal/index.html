@@ -18,27 +18,34 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
         <h4>{% trans 'Actual song list' %}</h4>
         <div class="btn-toolbar mb-2 mb-md-0">
+            <a type="button" class="btn btn-sm btn-outline-secondary mr-3" href="{% url 'band_portal:tabulatures_download_actual' %}">{% trans 'Download tabs' %}</a>
             <a type="button" class="btn btn-sm btn-outline-secondary mr-3" href="{% url 'band_portal:songs' %}">{% trans 'Song list' %}</a>
             <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:song_create' %}">{% trans 'Add song' %}</a>
         </div>
     </div>
     <div>
-    {% for song in songs %}
-        <div>
-            {{ song.artist }} - {{ song.name }} ({{song.tempo}})
-            {% if song.tabulature.tabulaturefile_set %}
-            {% for tab in song.tabulature.tabulaturefile_set.all %}
-            <ul>
-                {% if tab.is_actual %}
-                <li>
-                    <a href="{{ tab.file.url }}">{{ tab.filename }}</a>
-                </li>
-                {% endif %}
-            </ul>
-            {% endfor %}
-            {% endif %}
-        </div>
-    {% endfor  %}
+        <table class="table table-sm table-borderless table-striped">
+            {% for song in songs %}
+            <tr>
+                <td>
+                    <a href="{% url 'band_portal:song' song.artist song.name %}" class="text-secondary">
+                        {{ song.artist }} - {{ song.name }} ({{song.tempo}})
+                    </a>
+                </td>
+                <td>
+                    {% if song.tabulature.tabulaturefile_set %}
+                    {% for tab in song.tabulature.tabulaturefile_set.all %}
+                    {% if tab.is_actual %}
+                    <div>
+                        <a href="{{ tab.file.url }}">{{ tab.filename }}</a>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor  %}
+        </table>
     </div>
 </div>
 
@@ -61,16 +68,24 @@
 
 <div>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-        <h4>{% trans 'Live song list' %}</h4>
+        <a href="{% url 'band_portal:songs_live_list_lookup' %}" class="text-decoration-none text-dark"><h4>{% trans 'Live song list' %}</h4></a>
         <div class="btn-toolbar mb-2 mb-md-0">
             <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:songs_live_list' %}">{% trans 'Manage live list' %}</a>
         </div>
     </div>
     <div>
-    {% for song in live_songs %}
-    {{song.live_position }}: {{ song.artist }} - {{ song.name }} ({{song.tempo}}) {% trans 'lyrics' %} {% trans 'tabulature' %}
-    <br />
-    {% endfor  %}
+        <table class="table table-sm table-borderless">
+        {% for song in live_songs %}
+            <tr>
+                <td>
+                    {{song.live_position }}: {{ song.artist }}
+                </td>
+                <td>
+                    {{ song.name }} ({{song.tempo}})
+                </td>
+            </tr>
+        {% endfor  %}
+        </table>
     </div>
 </div>
 
@@ -78,12 +93,33 @@
 <div>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
         <h4>{% trans 'Unplayed songs' %}</h4>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a type="button" class="btn btn-sm btn-outline-secondary mr-3" href="{% url 'band_portal:tabulatures_download_notactual' %}">{% trans 'Download tabs' %}</a>
+        </div>
     </div>
     <div>
-    {% for song in unplayed_songs %}
-    {{ song.artist }} - {{ song.name }}
-    <br />
-    {% endfor  %}
+        <table class="table table-sm table-borderless table-striped">
+            {% for song in unplayed_songs %}
+            <tr>
+                <td>
+                    <a href="{% url 'band_portal:song' song.artist song.name %}" class="text-secondary">
+                        {{ song.artist }} - {{ song.name }} ({{song.tempo}})
+                    </a>
+                </td>
+                <td>
+                    {% if song.tabulature.tabulaturefile_set %}
+                        {% for tab in song.tabulature.tabulaturefile_set.all %}
+                            {% if tab.is_actual %}
+                            <div>
+                                <a href="{{ tab.file.url }}">{{ tab.filename }}</a>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor  %}
+        </table>
     </div>
 </div>
 

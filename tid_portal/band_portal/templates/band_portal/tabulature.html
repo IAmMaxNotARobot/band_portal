@@ -43,7 +43,7 @@
     <a href="{% url 'band_portal:tabulature_file_actuality' tab.id %}"> {% trans 'no' %}</a>
 {% endif %}
 
-<a href="{% url 'band_portal:tabulature_file_delete' tab.id %}" class="text-danger">delete</a>
+<a href="{% url 'band_portal:tabulature_file_delete' tab.id %}" class="text-danger">{% trans 'delete file' %}</a>
 
 <br />
 {% endfor %}

@@ -50,6 +50,39 @@ Not released
 </div>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h3> {% trans 'Tasks' %} </h3>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_completed_tasks' project.slug %}">{% trans 'Completed' %}</a>
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_add_task' project.slug %}">{% trans 'Add task' %}</a>
+    </div>
+</div>
+<div>
+    <form id="statusForm" method="post" action="{% url 'band_portal:tasks_toggle_status' %}">
+    {% csrf_token %}
+    <input type="hidden" id="statusInput" name="task_id">
+    </form>
+
+    {% for task in tasks %}
+    <div>
+        <p>
+            {{ task.description }}
+        </p>
+        {% for person in task.responsible_persons.all %}
+            <span class="text-secondary"> {{ person.first_name }} {{ person.last_name }}| </span>
+        {% endfor %}
+        <br />
+        <span class="text-secondary">{{ task.created_date }} </span>
+        <br />
+        {% if user in task.responsible_persons.all %}
+        <button id="finish{{ task.id }}" class="btn btn-info mr-2" onclick="toggleStatus({{ task.id }})">{% trans 'Complete' %}</button>
+        {% endif %}
+        <hr />
+    </div>
+
+    {% endfor %}
+</div>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
     <h3> {% trans 'Related objects' %} </h3>
     <div class="btn-toolbar mb-2 mb-md-0">
         <a type="button" class="btn btn-sm btn-outline-secondary" href="{% url 'band_portal:project_add_resource_file' project.slug %}">{% trans 'Add file' %}</a>
@@ -140,4 +173,19 @@ Not released
 </div>
 {% endfor %}
 
+{% endblock %}
+
+{% block AdditionalScripts %}
+<script>
+const statusForm = document.getElementById('statusForm');
+const formInput = statusForm.querySelector('#statusInput');
+
+function toggleStatus(task_id)
+{
+    formInput.value = task_id;
+    console.log(11111)
+
+    statusForm.submit();
+}
+</script>
 {% endblock %}

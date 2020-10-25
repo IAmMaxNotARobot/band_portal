@@ -29,3 +29,6 @@ admin.site.register(ProjectRelatedURL)
 admin.site.register(StatusValue)
 admin.site.register(StatusCategory)
 admin.site.register(ProjectStatusCategory)
+admin.site.register(ProjectTask)
+
+

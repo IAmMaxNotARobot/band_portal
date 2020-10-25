@@ -14,9 +14,15 @@ urlpatterns = [
     path('projects/<str:project_slug>/add-url', views.project_add_related_url, name='project_add_related_url'),
     path('projects/<str:project_slug>/add-event', views.project_add_event, name='project_add_event'),
     path('projects/<str:project_slug>/edit-statuses', views.project_edit_statuses, name='project_edit_statuses'),
-    path('projects/<str:project_slug>/project-edit-name', views.project_edit_name, name='project_edit_name'),
+    path('projects/<str:project_slug>/edit-name', views.project_edit_name, name='project_edit_name'),
+    path('projects/<str:project_slug>/completed-tasks', views.project_completed_tasks, name='project_completed_tasks'),
+    path('projects/<str:project_slug>/add-task', views.project_add_task, name='project_add_task'),
+    path('projects/<str:project_slug>/toggle_finished_task', views.project_toggle_finished_task, name='project_toggle_finished_task'),
 
     path('under-construction', views.under_construction, name='under_construction'),
+
+    path('tasks/user-tasks/', views.user_tasks, name='user_tasks'),
+    path('tasks/toggle-status/', views.tasks_toggle_status, name='tasks_toggle_status'),
 
     # Songs
     path('songs/', views.songs, name='songs'),
@@ -32,9 +38,13 @@ urlpatterns = [
     path('tabulature/create', views.tabulature_create, name='tabulature_create'),
     path('tabulatures/', views.tabulatures, name='tabulatures'),
     path('tabulatures/<int:id>', views.tabulature, name='tabulature'),
-    path('tabulatures/file_actuality/<int:id>', views.tabulature_file_actuality, name='tabulature_file_actuality'),
-    path('tabulatures/file_delete/<int:id>', views.tabulature_file_delete, name='tabulature_file_delete'),
-    path('tabulatures/file_add/<int:tabulature_id>', views.tabulature_file_add, name='tabulature_file_add'),
+    path('tabulatures/file-actuality/<int:id>', views.tabulature_file_actuality, name='tabulature_file_actuality'),
+    path('tabulatures/file-delete/<int:id>', views.tabulature_file_delete, name='tabulature_file_delete'),
+    path('tabulatures/file-add/<int:tabulature_id>', views.tabulature_file_add, name='tabulature_file_add'),
+    path('tabulatures/', views.tabulatures, name='tabulatures'),
+    path('tabulatures/download-actual', views.tabulatures_download_actual, name='tabulatures_download_actual'),
+    path('tabulatures/download-notactual', views.tabulatures_download_notactual, name='tabulatures_download_notactual'),
+
 
     # Lyrics
     path('lyrics_list/', views.lyrics_list, name='lyrics_list'),

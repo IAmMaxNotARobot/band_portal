@@ -14,8 +14,11 @@ logger.add(settings.BASE_DIR + "/debug.log", format="{time} {level} {message}", 
 
 @logger.catch
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
 def rest_get_live_list(request):
+    """ Return live list in json format """
+
+
     song_queryset = Song.objects.filter(live_position__gt=0).order_by('live_position')
     if request.method == "GET":
         song_data = SongSerializer(song_queryset, many=True).data

@@ -4,10 +4,12 @@ from django.urls import reverse
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.utils.text import slugify
+from django.contrib.auth.models import User
 
 from loguru import logger
 from datetime import datetime
 import sys
+import os
 
 from .exceptions import *
 from tid_portal import settings
@@ -22,7 +24,7 @@ logger.add(settings.BASE_DIR + "/debug.log", format="{time} {level} {message}", 
 
 
 def base_view(view):
-    """ Handle all exceptions """
+    """ Handle all unhandled exceptions """
 
 
     def inner(*args, **kwargs):
@@ -73,11 +75,13 @@ def project(request, project_slug):
     events = ProjectEvent.objects.owned_by_project(project.id)
     resource_files = ProjectResourceFile.objects.owned_by_project(project.id)
     related_urls = ProjectRelatedURL.objects.owned_by_project(project.id)
+    tasks = ProjectTask.objects.owned_by_project(project.id)
     context = {
         "project" : project,
         "events": events,
         "resource_files": resource_files,
         "related_urls": related_urls,
+        "tasks": tasks,
     }
     return render(request, 'band_portal/project.html', context)
 
@@ -282,7 +286,7 @@ def songs_live_list(request):
 
 
 @base_view
-@login_required
+#@login_required
 def songs_live_list_lookup(request):
     """ Show live list """
 
@@ -387,6 +391,79 @@ def tabulature_file_add(request, tabulature_id):
 
 @base_view
 @login_required
+def tabulatures_download_actual(request):
+    """ create tabullatures archive for downloading """
+
+    archive_path = TabulatureManager.tabulature_archive(request.user.username, 1)
+    if os.path.exists(archive_path):
+        with open(archive_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/zip")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(archive_path)
+            return response
+
+    raise Http404
+
+
+@base_view
+@login_required
+def tabulatures_download_notactual(request):
+    """ create tabullatures archive for downloading """
+
+    archive_path = TabulatureManager.tabulature_archive(request.user.username, 2)
+    if os.path.exists(archive_path):
+        with open(archive_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/zip")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(archive_path)
+            return response
+
+    raise Http404
+
+
+@base_view
+@login_required
+def project_completed_tasks(request, project_slug):
+    """ show completed tasks for project """
+
+    project = Project.objects.get(slug=project_slug)
+    completed_tasks = ProjectTask.objects.finished_by_project(project.id)
+    context = {"completed_tasks": completed_tasks, "project": project}
+    return render(request, 'band_portal/project_completed_tasks.html', context)
+
+
+@base_view
+@login_required
+def user_tasks(request):
+    """ show completed tasks for project """
+
+    user = request.user
+    tasks = ProjectTask.objects.owned_by_user(user, False)
+    completed_tasks = ProjectTask.objects.owned_by_user(user, True)
+    context = {"completed_tasks": completed_tasks, "tasks": tasks}
+    return render(request, 'band_portal/user_tasks.html', context)
+
+
+@base_view
+@login_required
+def project_add_task(request, project_slug):
+    """ Add task to related to project"""
+
+    project = Project.objects.get(slug=project_slug)
+    users = User.objects.filter(is_superuser=False)
+    if(request.method == "POST"):
+        ProjectTaskManager.create_from_post(request.POST, project)
+        return HttpResponseRedirect(reverse('band_portal:project', args=(project.slug,)))
+    context = {"project": project, "users": users}
+    return render(request, 'band_portal/project_add_task.html', context)
+
+
+@base_view
+@login_required
+def project_toggle_finished_task(request, project_slug):
+    pass
+
+
+@base_view
+@login_required
 def lyrics_list(request):
     """ List of lyrics files """
 
@@ -410,3 +487,27 @@ def under_construction(request):
 
 
     return HttpResponse('Functionality not ready yet!')
+
+
+@base_view
+@login_required
+def tasks_toggle_status(request):
+    """ toggle is_finished status of a task and redirects to the tasks page """
+
+    if(request.method == "POST"):
+        task_id = request.POST["task_id"]
+        project_task = ProjectTask.objects.get(id=task_id)
+        project_task.is_finished = not project_task.is_finished
+        project_task.save()
+
+    return HttpResponseRedirect(reverse('band_portal:user_tasks'))
+
+
+@base_view
+@login_required
+def project_task_toggle_status(request):
+    """ """
+    return HttpResponseRedirect()
+
+
+

@@ -16,14 +16,22 @@
 {% endblock %}
 
 {% block Content %}
+<table class="table table-borderless table-striped table-sm">
 {% for project in projects %}
-    <a href="{% url 'band_portal:project' project.slug %}">
-        <H5>
-            {{ project.name}}
-        </H5>
-        <h6> {{project.created_date}} </h6>
-
-    </a>
-<br />
+    <tr>
+        <td>
+            <a href="{% url 'band_portal:project' project.slug %}" class="text-dark">
+                <span>
+                    {{ project.name}}
+                </span>
+            </a>
+        </td>
+        <td>
+            {% for status_category in project.statuses.all %}
+            <span class="{{ status_category.status.styling_class }}"> &#x2B23 </span>
+            {% endfor %}
+        </td>
+    </tr>
 {% endfor %}
+</table>
 {% endblock %}

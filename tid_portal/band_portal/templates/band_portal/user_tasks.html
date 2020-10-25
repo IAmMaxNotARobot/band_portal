@@ -1,0 +1,80 @@
+{% extends 'band_portal/base.html' %}
+{% load i18n %}
+
+{% block Title %}
+{% trans 'My Tasks' %}
+{% endblock %}
+
+{% block SectionTitle %}
+{% trans 'My Tasks' %}
+{% endblock %}
+
+{% block AdditionalButtons %}
+{% endblock %}
+
+{% block Content %}
+<div>
+    <form id="statusForm" method="post" action="{% url 'band_portal:tasks_toggle_status' %}">
+    {% csrf_token %}
+    <input type="hidden" id="statusInput" name="task_id">
+    </form>
+
+    {% if tasks %}
+    <h5>{% trans 'Active' %}</h5>
+    {% for task in tasks %}
+
+    <div>
+        <p>
+            {{ task.description }}
+        </p>
+        <span class="text-secondary">{{ task.created_date }} </span>
+        <a href="{% url 'band_portal:project' task.project.slug %}">{{ task.project.name }}</a>
+        <br />
+        <button id="finish{{ task.id }}" class="btn btn-info mr-2" onclick="toggleStatus({{ task.id }})">{% trans 'Complete' %}</button>
+    </div>
+    <hr />
+
+    {% endfor %}
+    {% endif %}
+</div>
+<div>
+
+    {% if completed_tasks %}
+    <h5>{% trans 'Completed' %}</h5>
+    {% for task in completed_tasks %}
+
+    <div>
+        <p>
+            {{ task.description }}
+        </p>
+        <span class="text-secondary">{{ task.created_date }} </span>
+        <a href="{% url 'band_portal:project' task.project.slug %}">{{ task.project.name }}</a>
+        <br />
+        <button id="finish{{ task.id }}" class="btn btn-danger mr-2" onclick="toggleStatus({{ task.id }})">{% trans 'Return to active' %}</button>
+        <hr />
+    </div>
+
+
+    {% endfor %}
+    {% endif %}
+</div>
+
+<div>
+<p id="demo"></p>
+</div>
+{% endblock %}
+
+{% block AdditionalScripts %}
+<script>
+const statusForm = document.getElementById('statusForm');
+const formInput = statusForm.querySelector('#statusInput');
+
+function toggleStatus(task_id)
+{
+    formInput.value = task_id;
+    console.log(11111)
+
+    statusForm.submit();
+}
+</script>
+{% endblock %}

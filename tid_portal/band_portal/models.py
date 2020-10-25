@@ -16,7 +16,8 @@ from tid_portal import settings
 
 __all__ = ['Lyrics', 'Tabulature', 'TabulatureFile', 'Song', 'Project',
            'ProjectEvent', 'ProjectResourceFile', 'ProjectRelatedURL',
-           'StatusValue', 'StatusCategory', 'ProjectStatusCategory']
+           'StatusValue', 'StatusCategory', 'ProjectStatusCategory',
+           'ProjectTask']
 
 logger.add(settings.BASE_DIR + "/debug.log", format="{time} {level} {message}", rotation="2 week", compression="zip")
 
@@ -33,10 +34,7 @@ class Lyrics(models.Model):
                             )
 
     def show_lyrics(self) -> str:
-        """
-        Return text from lyrics file
-        :return:
-        """
+        """ Show text from lyrics file """
 
         logger.info("Trying to read file: {}".format(self.file.path))
         f = open(self.file.path, encoding="utf-8")
@@ -59,6 +57,8 @@ class Tabulature(models.Model):
     name = models.CharField(max_length=30, verbose_name="Tabulature set name")
 
     def create_tabulature_file(self, file, is_actual: bool = False):
+        """ Create TabulatureFile by file """
+
         tabulature_file = TabulatureFile()
         tabulature_file.tabulature = self
         tabulature_file.file.save(file.name, file)
@@ -84,7 +84,12 @@ class TabulatureFile(models.Model):
     """
 
 
-    tabulature = models.ForeignKey(Tabulature, on_delete=models.CASCADE, verbose_name="Tabulature")
+    tabulature = models.ForeignKey(
+        Tabulature,
+        on_delete=models.CASCADE,
+        verbose_name="Tabulature",
+        related_name='tab_files'
+    )
     pub_date = models.DateTimeField(default=datetime.now(), verbose_name="Publication date")
     is_actual = models.BooleanField(default=False, verbose_name="Is actual file")
     file = models.FileField(upload_to='tabs', null=True,
@@ -344,13 +349,48 @@ class ProjectStatusCategory(models.Model):
         return "{} {} ({})".format(self.project.name, self.category, self.status)
 
 
+class ProjectTaskQuerySet(models.QuerySet):
+    """ Additional queries for ProjectTask """
+
+
+    def owned_by_project(self, project_id: int):
+        return self.filter(project__id=project_id, is_finished=False).order_by('-created_date')
+
+    def finished_by_project(self, project_id: int):
+        return self.filter(project__id=project_id, is_finished=True).order_by('-created_date')
+
+    def owned_by_user(self, user: User, is_finished: bool = False):
+        return self.filter(responsible_persons__id=user.id, is_finished=is_finished).order_by('-created_date')
+
+
+class ProjectTask(models.Model):
+    """ Project tasks that should be done by users """
+
+    description = models.CharField(max_length=200, verbose_name="Description")
+    is_finished = models.BooleanField(default=False, verbose_name="Task is finished")
+    created_date = models.DateTimeField(default=datetime.now(), verbose_name="Created date")
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name="tasks",
+        verbose_name="Related project"
+    )
+    responsible_persons = models.ManyToManyField(User)
+    objects = ProjectTaskQuerySet.as_manager()
+
+    def __str__(self):
+        return self.description
+
+
 @receiver(post_delete, sender=TabulatureFile)
 def submission_delete(sender, instance, **kwargs):
     instance.file.delete(False)
 
+
 @receiver(post_delete, sender=Lyrics)
 def submission_delete(sender, instance, **kwargs):
     instance.file.delete(False)
+
 
 @receiver(post_save, sender=Project)
 def init_project_statuses(sender, instance, **kwargs):
